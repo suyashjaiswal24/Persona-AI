@@ -3,15 +3,25 @@
 const state = {
   personaId: null,
   personas: [],
-  history: [], // [{ role: "user"|"assistant", content }]
   busy: false,
 };
+
+// Per-persona conversation memory, keyed by personaId. Each entry keeps the
+// API history (for context) and the rendered chat HTML (so switching back to
+// a persona restores exactly what was on screen before).
+const sessions = {};
+
+function getSession(personaId) {
+  if (!sessions[personaId]) {
+    sessions[personaId] = { history: [], html: "" };
+  }
+  return sessions[personaId];
+}
 
 const els = {
   personaList: document.getElementById("personaList"),
   statusBox: document.getElementById("statusBox"),
   messages: document.getElementById("messages"),
-  emptyState: document.getElementById("emptyState"),
   headerAvatarSlot: document.getElementById("headerAvatarSlot"),
   headerName: document.getElementById("headerName"),
   headerTagline: document.getElementById("headerTagline"),
@@ -74,10 +84,23 @@ function renderPersonas() {
 
 function selectPersona(p) {
   if (state.busy) return;
+
+  // Save the outgoing persona's rendered chat before switching away.
+  if (state.personaId) {
+    getSession(state.personaId).html = els.messages.innerHTML;
+  }
+
   state.personaId = p.id;
-  state.history = [];
-  els.messages.innerHTML = "";
-  els.emptyState = null;
+
+  // Restore this persona's prior chat, or show the empty state if it's new.
+  const session = getSession(p.id);
+  els.messages.innerHTML =
+    session.html ||
+    `<div class="empty-state">
+       <div class="empty-emoji">🎙️</div>
+       <p>Select a persona and ask anything about code, careers, or their videos.</p>
+     </div>`;
+  scrollDown();
 
   document
     .querySelectorAll(".persona-card")
@@ -93,7 +116,12 @@ function selectPersona(p) {
 }
 
 // ---------- Message rendering helpers ----------
+function clearEmptyState() {
+  els.messages.querySelector(".empty-state")?.remove();
+}
+
 function addUserMessage(text) {
+  clearEmptyState();
   const div = document.createElement("div");
   div.className = "msg user";
   div.innerHTML = `<div class="bubble"></div>`;
@@ -220,13 +248,16 @@ async function sendMessage(message) {
     return trace;
   };
 
+  const personaId = state.personaId;
+  const session = getSession(personaId);
+
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      personaId: state.personaId,
+      personaId,
       message,
-      history: state.history,
+      history: session.history,
     }),
   });
 
@@ -278,9 +309,12 @@ async function sendMessage(message) {
   if (trace) trace.querySelector(".trace-title").textContent = "Referenced videos";
 
   if (finalText) {
-    state.history.push({ role: "user", content: message });
-    state.history.push({ role: "assistant", content: finalText });
+    session.history.push({ role: "user", content: message });
+    session.history.push({ role: "assistant", content: finalText });
   }
+  // Keep the saved snapshot in sync in case the user switches persona
+  // immediately after this reply finishes.
+  session.html = els.messages.innerHTML;
   finishTurn();
 }
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Persona AI — Hitesh &amp; Piyush</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Sidebar: persona picker -->
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <div>
+            <h1>Persona AI</h1>
+            <p>Chat with your favourite dev educators</p>
+          </div>
+        </div>
+
+        <div class="persona-list" id="personaList">
+          <!-- personas injected by app.js -->
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="status" id="statusBox">Checking server…</div>
+        </div>
+      </aside>
+
+      <!-- Main chat area -->
+      <main class="chat">
+        <header class="chat-header" id="chatHeader">
+          <div class="avatar-slot" id="headerAvatarSlot">
+            <div class="avatar">💬</div>
+          </div>
+          <div>
+            <h2 id="headerName">Pick a persona to start</h2>
+            <p id="headerTagline">Choose Hitesh or Piyush from the left.</p>
+          </div>
+        </header>
+
+        <div class="messages" id="messages">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-emoji">🎙️</div>
+            <p>Select a persona and ask anything about code, careers, or their videos.</p>
+          </div>
+        </div>
+
+        <form class="composer" id="composer">
+          <input
+            id="input"
+            type="text"
+            placeholder="Ask something… (e.g. 'Show me your latest videos on Docker')"
+            autocomplete="off"
+            disabled
+          />
+          <button type="submit" id="sendBtn" disabled>Send</button>
+        </form>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

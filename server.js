@@ -87,7 +87,9 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Chat endpoint. Streams pipeline steps as Server-Sent Events.
+// Chat endpoint. Streams the reply as Server-Sent Events: "token" chunks as
+// the model generates text, "tool_call"/"tool_result" if it looks up videos,
+// then "done" with the full reply (or "error").
 // Body: { personaId, message, history: [{role, content}] }
 app.post("/api/chat", async (req, res) => {
   const { personaId, message, history = [] } = req.body || {};

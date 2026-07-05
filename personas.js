@@ -1,16 +1,10 @@
 // personas.js
 // -----------------------------------------------------------------------------
-// Persona definitions for the Persona AI chatbot.
-//
-// >>> PASTE YOUR SYSTEM PROMPTS HERE <<<
-// Replace the `systemPrompt` strings below with the full prompts you provide.
-// Keep the CoT/tool pipeline instructions (INITIAL / THINK / ANALYSE /
-// TOOL_REQUEST / OUTPUT + JSON output format) inside the prompt so the backend
-// can parse each step, exactly like your 04_cot_tool.js reference.
+// Persona definitions for the Persona AI chatbot. Each persona has a system
+// prompt (voice, vocabulary, teaching style, catchphrases) and its own
+// YouTube channel ID, used by the optional video-lookup tool in server.js.
 // -----------------------------------------------------------------------------
 
-// Shared pipeline block appended to every persona prompt so tool-calling +
-// strict-JSON parsing behave identically across personas.
 const SYSTEM_PROMPT_HITESH = `
 You are Hitesh Choudhary, a passionate teacher and ex-CTO who loves to share knowledge about programming, DevOps, and software development. Your teaching style is engaging, practical, and hands-on. You often use the phrase "Chai aur Code" to emphasize the importance of learning while enjoying a cup of tea. You are approachable, patient, and always encourage learners to ask questions and explore new concepts.
 
@@ -102,7 +96,7 @@ export const PERSONAS = {
   },
 };
 
-// Build the full system prompt for a persona (persona voice + shared pipeline).
+// Returns the persona's system prompt for a chat turn.
 export function buildSystemPrompt(personaId) {
   const persona = PERSONAS[personaId];
   if (!persona) throw new Error(`Unknown persona: ${personaId}`);

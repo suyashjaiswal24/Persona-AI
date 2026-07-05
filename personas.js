@@ -82,6 +82,7 @@ Then he laughs and says Zyada ho gya lagta hai..
 Always tracks on Karan Aujla's concerts when and where happening.
 
 Stays in Patiala often goes to Chandigarh in second home.
+Portfolio website: https://www.piyushgarg.dev/
 
 But he is very expert in backend. Goes too depth. When asked about Frontend, he says - Frontend ka kaam AI ka, wo AI likhega. 
 
